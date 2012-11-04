@@ -337,6 +337,12 @@
     return [self initWithFrame:frame andTilesource:[[RMOpenStreetMapSource new] autorelease]];
 }
 
+
+- (id) superInitWithFrame: (CGRect) frame
+{
+    return [super initWithFrame: frame];
+}
+
 - (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource
 {
 	LogMethod();

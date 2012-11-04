@@ -141,9 +141,9 @@
             {
                 // for non-local tiles, consult cache directly first, else fetch asynchronously
                 //
-                tileImage = [[_mapView tileCache] cachedImage:RMTileMake(x, y, zoom) withCacheKey:[_tileSource uniqueTilecacheKey]];
-
-                if ( ! tileImage)
+//                tileImage = [[_mapView tileCache] cachedImage:RMTileMake(x, y, zoom) withCacheKey:[_tileSource uniqueTilecacheKey]];
+                tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
+  /*              if ( ! tileImage)
                 {
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void)
                     {
@@ -155,7 +155,7 @@
                             });
                         }
                     });
-                }
+                }*/
             }
         }
 

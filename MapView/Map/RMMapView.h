@@ -173,7 +173,16 @@ typedef enum : NSUInteger {
        minZoomLevel:(float)initialTileSourceMinZoomLevel
     backgroundImage:(UIImage *)backgroundImage;
 
+-(void)performInitializationWithTilesource:(id <RMTileSource>)newTilesource
+                           centerCoordinate:(CLLocationCoordinate2D)initialCenterCoordinate
+                                  zoomLevel:(float)initialTileSourceZoomLevel
+                               maxZoomLevel:(float)initialTileSourceMaxZoomLevel
+                               minZoomLevel:(float)initialTileSourceMinZoomLevel
+                           backgroundImage:(UIImage *)backgroundImage;
+
 - (void)setFrame:(CGRect)frame;
+
+- (id) superInitWithFrame: (CGRect) frame;
 
 #pragma mark - Movement
 
