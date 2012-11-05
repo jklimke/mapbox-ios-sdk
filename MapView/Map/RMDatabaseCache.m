@@ -69,7 +69,7 @@
 	if (useCacheDir)
 		paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
 	else
-		paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+		paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
 
 	if ([paths count] > 0) // Should only be one...
 	{
@@ -240,7 +240,7 @@
 - (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
     // TODO: Converting the image here (again) is not so good...
-	NSData *data = UIImagePNGRepresentation(image);
+	NSData *data = UIImageJPEGRepresentation(image,0.8);
 
     if (_capacity != 0)
     {
