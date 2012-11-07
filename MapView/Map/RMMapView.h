@@ -184,6 +184,8 @@ typedef enum : NSUInteger {
 
 - (id) superInitWithFrame: (CGRect) frame;
 
++ (UIImage *)resourceImageNamed:(NSString *)imageName;
+
 #pragma mark - Movement
 
 /** @name Panning the Map */
