@@ -139,8 +139,8 @@
     BOOL _delegateHasDidChangeUserTrackingMode;
 
     UIView *_backgroundView;
-    RMMapScrollView *_mapScrollView;
-    RMMapOverlayView *_overlayView;
+    //RMMapScrollView *_mapScrollView;
+    //RMMapOverlayView *_overlayView;
     UIView *_tiledLayersSuperview;
     RMLoadingTileView *_loadingTileView;
 
@@ -210,6 +210,8 @@
 @synthesize debugTiles = _debugTiles;
 @synthesize hideAttribution = _hideAttribution;
 @synthesize showLogoBug = _showLogoBug;
+@synthesize mapScrollView = _mapScrollView;
+@synthesize overlayView = _overlayView;
 
 #pragma mark -
 #pragma mark Initialization

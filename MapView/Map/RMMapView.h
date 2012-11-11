@@ -494,4 +494,8 @@ typedef enum : NSUInteger {
 *   @param animated Whether changes to the map center or rotation should be animated when the mode is changed. */
 - (void)setUserTrackingMode:(RMUserTrackingMode)mode animated:(BOOL)animated;
 
+
+@property (nonatomic, assign) RMMapScrollView *mapScrollView;
+@property (nonatomic, assign) RMMapOverlayView *overlayView;
+
 @end
