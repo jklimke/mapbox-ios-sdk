@@ -53,6 +53,8 @@
 #import "RMAttributionViewController.h"
 
 #import "SMCalloutView.h"
+#import <CoreGraphics/CGAffineTransform.h>
+
 
 #pragma mark --- begin constants ----
 
@@ -78,9 +80,6 @@
 
 - (void)registerMoveEventByUser:(BOOL)wasUserEvent;
 - (void)registerZoomEventByUser:(BOOL)wasUserEvent;
-
-- (void)correctPositionOfAllAnnotations;
-- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers animated:(BOOL)animated;
 
 - (void)correctMinZoomScaleForBoundingMask;
 
@@ -177,8 +176,8 @@
     UIViewController *_viewControllerPresentingAttribution;
     UIButton *_attributionButton;
 
-    CGAffineTransform _mapTransform;
-    CATransform3D _annotationTransform;
+    /*CGAffineTransform _mapTransform;
+    CATransform3D _annotationTransform;*/
 
     NSOperationQueue *_moveDelegateQueue;
     NSOperationQueue *_zoomDelegateQueue;
@@ -212,6 +211,8 @@
 @synthesize showLogoBug = _showLogoBug;
 @synthesize mapScrollView = _mapScrollView;
 @synthesize overlayView = _overlayView;
+@synthesize mapTransform = _mapTransform;
+@synthesize annotationTransform = _annotationTransform;
 
 #pragma mark -
 #pragma mark Initialization
@@ -3430,5 +3431,6 @@
         [_viewControllerPresentingAttribution presentModalViewController:attributionViewController animated:YES];
     }
 }
+
 
 @end

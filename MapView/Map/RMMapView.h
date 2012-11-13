@@ -27,6 +27,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreGraphics/CGGeometry.h>
+#import <CoreGraphics/CGAffineTransform.h>
 
 #import "RMGlobalConstants.h"
 #import "RMFoundation.h"
@@ -456,6 +457,9 @@ typedef enum : NSUInteger {
 - (CLLocationCoordinate2D)normalizeCoordinate:(CLLocationCoordinate2D)coordinate;
 - (RMTile)tileWithCoordinate:(CLLocationCoordinate2D)coordinate andZoom:(int)zoom;
 
+- (void)correctPositionOfAllAnnotations;
+- (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllLayers animated:(BOOL)animated;
+
 /** Return the bounding box for a given map tile. 
 *   @param aTile A map tile. 
 *   @return The bounding box for the tile in the current projection. */
@@ -497,5 +501,8 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, assign) RMMapScrollView *mapScrollView;
 @property (nonatomic, assign) RMMapOverlayView *overlayView;
+
+@property (nonatomic, assign) CGAffineTransform mapTransform;
+@property (nonatomic, assign) CATransform3D annotationTransform;
 
 @end
