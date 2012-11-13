@@ -200,6 +200,11 @@
          {
              data = [results dataForColumnIndex:0];
              if (data) cachedImage = [UIImage imageWithData:data];
+             if(cachedImage == nil)
+             {
+                 NSLog(@"Cache Image Load Failed");
+                 
+             }
          }
 
          [results close];
