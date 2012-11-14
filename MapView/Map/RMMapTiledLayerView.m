@@ -14,6 +14,7 @@
 #import "RMTileCache.h"
 #import "RMMBTilesSource.h"
 #import "RMDBMapSource.h"
+#import "RMAbstractWebMapSource.h"
 
 #define IS_VALID_TILE_IMAGE(image) (image != nil && [image isKindOfClass:[UIImage class]])
 
@@ -79,7 +80,7 @@
 
 //    NSLog(@"drawLayer: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
     if (self.useSnapshotRenderer)
     {
@@ -131,9 +132,9 @@
 
         if (zoom >= _tileSource.minZoom && zoom <= _tileSource.maxZoom)
         {
-            if ([_tileSource isKindOfClass:[RMMBTilesSource class]] || [_tileSource isKindOfClass:[RMDBMapSource class]])
+            if ( ! [_tileSource isKindOfClass:[RMAbstractWebMapSource class]])
             {
-                // for local tiles, query the source directly since trivial blocking
+                // for non-web tiles, query the source directly since trivial blocking
                 //
                 tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
             }
