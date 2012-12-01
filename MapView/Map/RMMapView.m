@@ -98,6 +98,7 @@
 @property (nonatomic, getter=isUpdating) BOOL updating;
 @property (nonatomic, retain) CLLocation *location;
 @property (nonatomic, retain) CLHeading *heading;
+@property (nonatomic, assign) BOOL hasCustomLayer;
 
 @end
 
@@ -318,8 +319,6 @@
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    LogMethod();
-
     if (!(self = [super initWithCoder:aDecoder]))
         return nil;
 
@@ -339,8 +338,6 @@
 
 - (id)initWithFrame:(CGRect)frame
 {
-    LogMethod();
-
     return [self initWithFrame:frame andTilesource:[[RMOpenStreetMapSource new] autorelease]];
 }
 
@@ -352,8 +349,6 @@
 
 - (id)initWithFrame:(CGRect)frame andTilesource:(id <RMTileSource>)newTilesource
 {
-	LogMethod();
-
 	CLLocationCoordinate2D coordinate;
 	coordinate.latitude = kDefaultInitialLatitude;
 	coordinate.longitude = kDefaultInitialLongitude;
@@ -375,8 +370,6 @@
        minZoomLevel:(float)minZoomLevel
     backgroundImage:(UIImage *)backgroundImage
 {
-    LogMethod();
-
     if (!(self = [super initWithFrame:frame]))
         return nil;
 
@@ -416,6 +409,9 @@
 {
     NSAssert([[NSBundle mainBundle] pathForResource:@"MapBox" ofType:@"bundle"], @"Resource bundle not found in application.");
 
+    if ( ! [[imageName pathExtension] length])
+        imageName = [imageName stringByAppendingString:@".png"];
+
     NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"MapBox" ofType:@"bundle"];
     NSBundle *resourcesBundle = [NSBundle bundleWithPath:bundlePath];
     NSString *imagePath = [resourcesBundle pathForResource:imageName ofType:nil];
@@ -425,8 +421,6 @@
 
 - (void)dealloc
 {
-    LogMethod();
-
     [self setDelegate:nil];
     [self setBackgroundView:nil];
     [self setQuadTree:nil];
@@ -951,6 +945,26 @@
         return YES;
     else
         return NO;
+}
+
+- (void)setZoom:(float)newZoom animated:(BOOL)animated
+{
+    [self setZoom:newZoom atCoordinate:self.centerCoordinate animated:animated];
+}
+
+- (void)setZoom:(float)newZoom atCoordinate:(CLLocationCoordinate2D)newCenter animated:(BOOL)animated
+{
+    [UIView animateWithDuration:(animated ? 0.3 : 0.0)
+                          delay:0.0
+                        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationCurveEaseInOut
+                     animations:^(void)
+                     {
+                         [self setZoom:newZoom];
+                         [self setCenterCoordinate:newCenter animated:NO];
+
+                         self.userTrackingMode = RMUserTrackingModeNone;
+                     }
+                     completion:nil];
 }
 
 - (void)zoomByFactor:(float)zoomFactor near:(CGPoint)pivot animated:(BOOL)animated
@@ -2251,12 +2265,16 @@
 // if #zoom is outside of range #minZoom to #maxZoom, zoom level is clamped to that range.
 - (void)setZoom:(float)newZoom
 {
+    [self registerZoomEventByUser:NO];
+
     _zoom = (newZoom > _maxZoom) ? _maxZoom : newZoom;
     _zoom = (_zoom < _minZoom) ? _minZoom : _zoom;
 
 //    RMLog(@"New zoom:%f", _zoom);
 
     _mapScrollView.zoomScale = exp2f(_zoom);
+
+    [_zoomDelegateQueue setSuspended:NO];
 }
 
 - (float)tileSourcesZoom
@@ -2758,39 +2776,39 @@
     [sortedAnnotations filterUsingPredicate:[NSPredicate predicateWithFormat:@"isUserLocationAnnotation = NO"]];
 
     [sortedAnnotations sortUsingComparator:^(id obj1, id obj2)
-     {
-         RMAnnotation *annotation1 = (RMAnnotation *)obj1;
-         RMAnnotation *annotation2 = (RMAnnotation *)obj2;
+    {
+        RMAnnotation *annotation1 = (RMAnnotation *)obj1;
+        RMAnnotation *annotation2 = (RMAnnotation *)obj2;
 
-         // clusters above/below non-clusters (based on _orderClusterMarkersAboveOthers)
-         //
-         if (   [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] && ! [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
-             return (_orderClusterMarkersAboveOthers ? NSOrderedDescending : NSOrderedAscending);
+        // clusters above/below non-clusters (based on _orderClusterMarkersAboveOthers)
+        //
+        if (   [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] && ! [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+            return (_orderClusterMarkersAboveOthers ? NSOrderedDescending : NSOrderedAscending);
 
-         if ( ! [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] &&   [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
-             return (_orderClusterMarkersAboveOthers ? NSOrderedAscending : NSOrderedDescending);
+        if ( ! [annotation1.annotationType isEqualToString:kRMClusterAnnotationTypeName] &&   [annotation2.annotationType isEqualToString:kRMClusterAnnotationTypeName])
+            return (_orderClusterMarkersAboveOthers ? NSOrderedAscending : NSOrderedDescending);
 
-         // markers above shapes
-         //
-         if (   [annotation1.layer isKindOfClass:[RMMarker class]] && [annotation2.layer isKindOfClass:[RMShape class]])
-             return NSOrderedDescending;
+        // markers above shapes
+        //
+        if (   [annotation1.layer isKindOfClass:[RMMarker class]] && [annotation2.layer isKindOfClass:[RMShape class]])
+            return NSOrderedDescending;
 
-         if (   [annotation1.layer isKindOfClass:[RMShape class]] && [annotation2.layer isKindOfClass:[RMMarker class]])
-             return NSOrderedAscending;
+        if (   [annotation1.layer isKindOfClass:[RMShape class]] && [annotation2.layer isKindOfClass:[RMMarker class]])
+            return NSOrderedAscending;
 
-         // the rest in increasing y-position
-         //
-         CGPoint obj1Point = [self convertPoint:annotation1.position fromView:_overlayView];
-         CGPoint obj2Point = [self convertPoint:annotation2.position fromView:_overlayView];
+        // the rest in increasing y-position
+        //
+        CGPoint obj1Point = [self convertPoint:annotation1.position fromView:_overlayView];
+        CGPoint obj2Point = [self convertPoint:annotation2.position fromView:_overlayView];
 
-         if (obj1Point.y > obj2Point.y)
-             return NSOrderedDescending;
+        if (obj1Point.y > obj2Point.y)
+            return NSOrderedDescending;
 
-         if (obj1Point.y < obj2Point.y)
-             return NSOrderedAscending;
+        if (obj1Point.y < obj2Point.y)
+            return NSOrderedAscending;
 
-         return NSOrderedSame;
-     }];
+        return NSOrderedSame;
+    }];
 
     for (CGFloat i = 0; i < [sortedAnnotations count]; i++)
         ((RMAnnotation *)[sortedAnnotations objectAtIndex:i]).layer.zPosition = (CGFloat)i;
@@ -2929,21 +2947,14 @@
 
         [self setUserTrackingMode:RMUserTrackingModeNone animated:YES];
 
-        NSMutableArray *annotationsToRemove = [NSMutableArray array];
+        for (RMAnnotation *annotation in [NSArray arrayWithObjects:_trackingHaloAnnotation, _accuracyCircleAnnotation, self.userLocation, nil])
+            [self removeAnnotation:annotation];
 
-        for (RMAnnotation *annotation in _annotations)
-        {
-            if (annotation.isUserLocationAnnotation)
-                [annotationsToRemove addObject:annotation];
-        }
-
-        for (RMAnnotation *annotationToRemove in annotationsToRemove)
-        {
-            [self removeAnnotation:annotationToRemove];
-        }
+        [_trackingHaloAnnotation release]; _trackingHaloAnnotation = nil;
+        [_accuracyCircleAnnotation release]; _accuracyCircleAnnotation = nil;
 
         self.userLocation = nil;
-    }    
+    }
 }
 
 - (void)setUserLocation:(RMUserLocation *)newUserLocation
@@ -3075,27 +3086,24 @@
 
             self.userLocation.layer.hidden = YES;
 
-            _userHaloTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingDotHalo"]];
+            _userHaloTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"TrackingDotHalo.png"]];
 
             _userHaloTrackingView.center = CGPointMake(round([self bounds].size.width  / 2),
-                                                      round([self bounds].size.height / 2));
+                                                       round([self bounds].size.height / 2));
 
             _userHaloTrackingView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin  |
-                                                    UIViewAutoresizingFlexibleRightMargin |
-                                                    UIViewAutoresizingFlexibleTopMargin   |
-                                                    UIViewAutoresizingFlexibleBottomMargin;
-
-            for (NSString *animationKey in _trackingHaloAnnotation.layer.animationKeys)
-                [_userHaloTrackingView.layer addAnimation:[[[_trackingHaloAnnotation.layer animationForKey:animationKey] copy] autorelease] forKey:animationKey];
+                                                     UIViewAutoresizingFlexibleRightMargin |
+                                                     UIViewAutoresizingFlexibleTopMargin   |
+                                                     UIViewAutoresizingFlexibleBottomMargin;
 
             [self insertSubview:_userHaloTrackingView belowSubview:_overlayView];
 
             _userHeadingTrackingView = [[UIImageView alloc] initWithImage:[RMMapView resourceImageNamed:@"HeadingAngleSmall.png"]];
 
             _userHeadingTrackingView.frame = CGRectMake((self.bounds.size.width  / 2) - (_userHeadingTrackingView.bounds.size.width / 2),
-                                                       (self.bounds.size.height / 2) - _userHeadingTrackingView.bounds.size.height,
-                                                       _userHeadingTrackingView.bounds.size.width,
-                                                       _userHeadingTrackingView.bounds.size.height * 2);
+                                                        (self.bounds.size.height / 2) - _userHeadingTrackingView.bounds.size.height,
+                                                        _userHeadingTrackingView.bounds.size.width,
+                                                        _userHeadingTrackingView.bounds.size.height * 2);
 
             _userHeadingTrackingView.contentMode = UIViewContentModeTop;
 
@@ -3272,12 +3280,20 @@
     if (_userLocationTrackingView)
         _userLocationTrackingView.hidden = ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate);
 
-    _accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10;
+    _accuracyCircleAnnotation.layer.hidden = newLocation.horizontalAccuracy <= 10 || self.userLocation.hasCustomLayer;
 
-    _trackingHaloAnnotation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userTrackingMode == RMUserTrackingModeFollowWithHeading);
+    _trackingHaloAnnotation.layer.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userTrackingMode == RMUserTrackingModeFollowWithHeading || self.userLocation.hasCustomLayer);
 
     if (_userHaloTrackingView)
-        _userHaloTrackingView.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10);
+    {
+        _userHaloTrackingView.hidden = ( ! CLLocationCoordinate2DIsValid(self.userLocation.coordinate) || newLocation.horizontalAccuracy > 10 || self.userLocation.hasCustomLayer);
+
+        // ensure animations are copied from layer
+        //
+        if ( ! [_userHaloTrackingView.layer.animationKeys count])
+            for (NSString *animationKey in _trackingHaloAnnotation.layer.animationKeys)
+                [_userHaloTrackingView.layer addAnimation:[[[_trackingHaloAnnotation.layer animationForKey:animationKey] copy] autorelease] forKey:animationKey];
+    }
 
     if ( ! [_annotations containsObject:self.userLocation])
         [self addAnnotation:self.userLocation];

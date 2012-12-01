@@ -155,9 +155,9 @@ typedef enum : NSUInteger {
 *   @param frame The map view's frame. 
 *   @param newTilesource A tile source to use for the map tiles. 
 *   @param initialCenterCoordinate The starting map center coordinate.
-*   @param initialZoomLevel The starting map zoom level, clamped to the zoom levels supported by the tile source(s).
-*   @param maxZoomLevel The maximum zoom level allowed by the map view, clamped to the zoom levels supported by the tile source(s).
-*   @param minZoomLevel The minimum zoom level allowed by the map view, clamped to the zoom levels supported by the tile source(s).
+*   @param initialTileSourceZoomLevel The starting map zoom level, clamped to the zoom levels supported by the tile source(s).
+*   @param initialTileSourceMaxZoomLevel The maximum zoom level allowed by the map view, clamped to the zoom levels supported by the tile source(s).
+*   @param initialTileSourceMinZoomLevel The minimum zoom level allowed by the map view, clamped to the zoom levels supported by the tile source(s).
 *   @param backgroundImage A custom background image to use behind the map instead of the default gridded tile background that moves with the map. 
 *   @return An initialized map view, or `nil` if a map view was unable to be initialized. */
 - (id)initWithFrame:(CGRect)frame
@@ -230,6 +230,17 @@ typedef enum : NSUInteger {
 
 // recenter the map on #boundsRect, expressed in projected meters
 - (void)setProjectedBounds:(RMProjectedRect)boundsRect animated:(BOOL)animated;
+
+/** Set zoom level, optionally with an animation. 
+*   @param newZoom The desired zoom level.
+*   @param animated Whether to animate the map change. */
+- (void)setZoom:(float)newZoom animated:(BOOL)animated;
+
+/** Set both zoom level and center coordinate at the same time, optionally with an animation. 
+*   @param newZoom The desired zoom level. 
+*   @param newCenter The desired center coordinate. 
+*   @param animated Whether to animate the map change. */
+- (void)setZoom:(float)newZoom atCoordinate:(CLLocationCoordinate2D)newCenter animated:(BOOL)animated;
 
 /** Zoom the map by a given factor near a certain point. 
 *   @param zoomFactor The factor by which to zoom the map. 

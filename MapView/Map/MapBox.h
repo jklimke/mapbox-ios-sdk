@@ -47,5 +47,6 @@
 #import "RMShape.h"
 #import "RMStaticMapView.h"
 #import "RMTileCache.h"
+#import "RMTileMillSource.h"
 #import "RMUserLocation.h"
 #import "RMUserTrackingBarButtonItem.h"
