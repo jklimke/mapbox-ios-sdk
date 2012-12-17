@@ -332,6 +332,10 @@ typedef enum : NSUInteger {
 *   @param annotations An array containing the annotations to remove from the map. */
 - (void)removeAnnotations:(NSArray *)annotations;
 
+/** Check if a given annotation is contained in the map views annotation collection.
+ * @param annotation A given annotation that should be checked for inclusion */
+- (BOOL)containsAnnotation:(RMAnnotation*) annotation;
+
 /** Remove all annotations from the map. This does not remove user location annotations, if any. */
 - (void)removeAllAnnotations;
 

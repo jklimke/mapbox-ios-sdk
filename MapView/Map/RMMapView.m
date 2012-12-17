@@ -2902,6 +2902,11 @@
     [self correctPositionOfAllAnnotations];
 }
 
+- (BOOL)containsAnnotation: (RMAnnotation*) annotation
+{
+    return [_annotations containsObject: annotation];
+}
+
 - (void)removeAllAnnotations
 {
     [self removeAnnotations:[_annotations allObjects]];
