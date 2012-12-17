@@ -291,7 +291,7 @@
         }
         else
         {
-//            NSLog(@"Invalid image for {%d,%d} @ %d", x, y, zoom);
+            NSLog(@"Invalid image for {%d,%d} @ %d", x, y, zoom);
         }
 
         UIGraphicsPopContext();
