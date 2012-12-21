@@ -258,7 +258,7 @@
     _visibleAnnotations = [NSMutableSet new];
     [self setQuadTree:[[[RMQuadTree alloc] initWithMapView:self] autorelease]];
     _enableClustering = _positionClusterMarkersAtTheGravityCenter = NO;
-    _clusterMarkerSize = CGSizeMake(100.0, 100.0);
+    _clusterMarkerSize = CGSizeMake(50.0, 80.0);
     _clusterAreaSize = CGSizeMake(150.0, 150.0);
 
     _moveDelegateQueue = [NSOperationQueue new];

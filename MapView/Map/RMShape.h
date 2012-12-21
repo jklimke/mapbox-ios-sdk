@@ -80,6 +80,8 @@
 
 /** The bounding box of the shape in the current viewport. */
 @property (nonatomic, readonly) CGRect pathBoundingBox;
+@property (nonatomic, readonly) RMMapView* mapView;
+
 
 /** @name Drawing Shapes */
 

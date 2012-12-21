@@ -61,7 +61,7 @@
 @implementation RMQuadTreeNode
 {
     RMProjectedRect _boundingBox, _northWestBoundingBox, _northEastBoundingBox, _southWestBoundingBox, _southEastBoundingBox;
-    NSMutableArray *_annotations;
+    NSMutableSet *_annotations;
     RMQuadTreeNode *_parentNode, *_northWest, *_northEast, *_southWest, *_southEast;
     RMQuadTreeNodeType _nodeType;
     RMMapView *_mapView;
@@ -89,7 +89,7 @@
     _mapView = aMapView;
     _parentNode = [aParentNode retain];
     _northWest = _northEast = _southWest = _southEast = nil;
-    _annotations = [NSMutableArray new];
+    _annotations = [NSMutableSet new];
     _boundingBox = aBoundingBox;
     _cachedClusterAnnotation = nil;
     _cachedClusterEnclosedAnnotations = nil;
@@ -143,7 +143,8 @@
 
     @synchronized (_annotations)
     {
-        immutableAnnotations = [NSArray arrayWithArray:_annotations];
+//        immutableAnnotations = [NSArray arrayWithArray:_annotations ];
+        immutableAnnotations = [_annotations allObjects];
     }
 
     return immutableAnnotations;
@@ -244,7 +245,8 @@
 
         @synchronized (_annotations)
         {
-            immutableAnnotations = [NSArray arrayWithArray:_annotations];
+//            immutableAnnotations = [NSArray arrayWithArray: _annotations];
+            immutableAnnotations = [_annotations allObjects];
             [_annotations removeAllObjects];
         }
 
@@ -283,7 +285,8 @@
 
         @synchronized (_annotations)
         {
-            immutableAnnotations = [NSArray arrayWithArray:_annotations];
+            //immutableAnnotations = [NSArray arrayWithArray:_annotations];
+            immutableAnnotations = [_annotations allObjects];
             [_annotations removeAllObjects];
         }
 
@@ -546,7 +549,8 @@
         {
             @synchronized (_annotations)
             {
-                [someArray addObjectsFromArray:_annotations];
+                //[someArray addObjectsFromArray:_annotations];
+                [someArray addObjectsFromArray:[_annotations allObjects]];
             }
 
             return;
@@ -558,7 +562,7 @@
         {
             @synchronized (_annotations)
             {
-                [someArray addObjectsFromArray:_annotations];
+                [someArray addObjectsFromArray:[_annotations allObjects]];
             }
 
             return;

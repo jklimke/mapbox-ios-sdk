@@ -54,6 +54,7 @@
 @synthesize shadowOffset;
 @synthesize enableShadow;
 @synthesize pathBoundingBox;
+@synthesize mapView = mapView;
 
 #define kDefaultLineWidth 2.0
 
@@ -361,6 +362,7 @@
 
 - (void)moveToCoordinate:(CLLocationCoordinate2D)coordinate
 {
+    
     RMProjectedPoint mercator = [[mapView projection] coordinateToProjectedPoint:coordinate];
     [self moveToProjectedPoint:mercator];
 }
