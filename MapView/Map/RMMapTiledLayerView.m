@@ -197,6 +197,11 @@
                 // tries to return lower zoom level tiles if a tile cannot be found
                 while ( !tileImage && currentZoom >= _tileSource.minZoom && currentTileDepth <= _mapView.missingTilesDepth)
                 {
+                    if(currentZoom > _tileSource.maxZoom)
+                    {
+                        continue;
+                    }
+                    
                     float nextX = x / powf(2.0, (float)currentTileDepth),
                           nextY = y / powf(2.0, (float)currentTileDepth);
                     float nextTileX = floor(nextX),
@@ -286,7 +291,7 @@
         }
         else
         {
-//            NSLog(@"Invalid image for {%d,%d} @ %d", x, y, zoom);
+            NSLog(@"Invalid image for {%d,%d} @ %d", x, y, zoom);
         }
 
         UIGraphicsPopContext();
