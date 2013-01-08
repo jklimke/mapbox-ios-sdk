@@ -47,8 +47,10 @@ Installation
 There are three ways that you can install the SDK, depending upon your needs: 
 
  1. Clone from GitHub and integrate as a dependent Xcode project. 
- 1. Use the [binary framework](https://github.com/mapbox/mapbox-ios-sdk/downloads). Use like regular frameworks, linking it in your project, adding `#import <MapBox/MapBox.h>`, and additionally, including the `-ObjC` linker flag. 
+ 1. Use the [binary framework](https://github.com/mapbox/mapbox-ios-sdk/tree/packaging/Downloads). Use like regular frameworks, linking it in your project, adding `#import <MapBox/MapBox.h>`, and additionally, including the `-ObjC` linker flag. 
  1. Install via [CocoaPods](http://cocoapods.org). 
+
+More detailed information on the installation options is available in the [SDK guide](http://mapbox.com/mapbox-ios-sdk/). 
 
 The two main branches of the GitHub repository are pretty self-explanatory: `release` and `develop`. When we tag a [release](https://github.com/mapbox/mapbox-ios-sdk/tags), we also merge `develop` over to `release`, except in the case of minor point releases (e.g., `0.4.2`), where we might just bring over a fix or two from `develop`. 
 
@@ -88,3 +90,12 @@ To report bugs and help fix them, please use the [issue tracker][tracker].
 [support]: http://support.mapbox.com/discussions/mapbox-ios-sdk
 [docs]: http://mapbox.com/mapbox-ios-sdk/
 [tracker]: https://github.com/mapbox/mapbox-ios-sdk/issues
+
+Dependent Libraries
+-------------------
+
+The MapBox iOS SDK makes use of several sub-libraries, listed below. See License.txt for more detailed information about Route-Me and Proj4 and see the individual license files in the sub-libraries for more information on each. 
+
+ * [FMDB](https://github.com/ccgus/fmdb) by Gus Mueller (SQLite for caching and MBTiles)
+ * [GRMustache](https://github.com/groue/GRMustache) by Gwendal Roué (Mustache templates)
+ * [SMCalloutView](https://github.com/nfarina/calloutview) by Nick Farina (annotation callouts)

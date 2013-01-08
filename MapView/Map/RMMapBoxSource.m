@@ -70,7 +70,7 @@
                                                                            options:0
                                                                              error:nil] retain];
 
-        id dataObject;
+        id dataObject = nil;
         
         if (mapView && (dataObject = [_infoDictionary objectForKey:@"data"]) && dataObject)
         {
@@ -80,7 +80,7 @@
                 {
                     NSURL *dataURL = [NSURL URLWithString:[dataObject objectAtIndex:0]];
                     
-                    NSMutableString *jsonString;
+                    NSMutableString *jsonString = nil;
                     
                     if (dataURL && (jsonString = [NSMutableString stringWithContentsOfURL:dataURL encoding:NSUTF8StringEncoding error:nil]) && jsonString)
                     {
@@ -90,7 +90,7 @@
                             [jsonString replaceCharactersInRange:NSMakeRange([jsonString length] - 2, 2) withString:@""];
                         }
                         
-                        id jsonObject;
+                        id jsonObject = nil;
                         
                         if ((jsonObject = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:nil]) && [jsonObject isKindOfClass:[NSDictionary class]])
                         {
@@ -102,14 +102,19 @@
                                     .longitude = [[[[feature objectForKey:@"geometry"] objectForKey:@"coordinates"] objectAtIndex:0] floatValue],
                                     .latitude  = [[[[feature objectForKey:@"geometry"] objectForKey:@"coordinates"] objectAtIndex:1] floatValue]
                                 };
+
+                                RMAnnotation *annotation = nil;
+
+                                if ([mapView.delegate respondsToSelector:@selector(mapView:layerForAnnotation:)])
+                                    annotation = [RMAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
+                                else
+                                    annotation = [RMPointAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
                                 
-                                RMPointAnnotation *pointAnnotation = [RMPointAnnotation annotationWithMapView:mapView coordinate:coordinate andTitle:[properties objectForKey:@"title"]];
-                                
-                                pointAnnotation.userInfo = properties;
+                                annotation.userInfo = properties;
                                 
                                 dispatch_async(dispatch_get_main_queue(), ^(void)
                                 {
-                                    [mapView addAnnotation:pointAnnotation];
+                                    [mapView addAnnotation:annotation];
                                 });
                             }
                         }
@@ -141,7 +146,7 @@
 
 - (id)initWithReferenceURL:(NSURL *)referenceURL enablingDataOnMapView:(RMMapView *)mapView
 {
-    id dataObject;
+    id dataObject = nil;
     
     if ([[referenceURL pathExtension] isEqualToString:@"jsonp"])
         referenceURL = [NSURL URLWithString:[[referenceURL absoluteString] stringByReplacingOccurrencesOfString:@".jsonp" 
@@ -193,7 +198,7 @@
     if ([self.infoDictionary objectForKey:@"scheme"] && [[self.infoDictionary objectForKey:@"scheme"] isEqual:@"tms"])
         y = pow(2, zoom) - tile.y - 1;
 
-    NSString *tileURLString;
+    NSString *tileURLString = nil;
 
     if ([self.infoDictionary objectForKey:@"tiles"])
         tileURLString = [[self.infoDictionary objectForKey:@"tiles"] objectAtIndex:0];
@@ -207,7 +212,7 @@
 
     if (_imageQuality != RMMapBoxSourceQualityFull)
     {
-        NSString *qualityExtension;
+        NSString *qualityExtension = nil;
 
         switch (_imageQuality)
         {
@@ -277,7 +282,7 @@
 {
     id bounds = [self.infoDictionary objectForKey:@"bounds"];
 
-    NSArray *parts;
+    NSArray *parts = nil;
 
     if ([bounds isKindOfClass:[NSArray class]])
         parts = bounds;
