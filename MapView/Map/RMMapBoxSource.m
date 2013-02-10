@@ -35,12 +35,12 @@
 
 #import "RMMapView.h"
 #import "RMPointAnnotation.h"
+#import "RMConfiguration.h"
 
 @interface RMMapBoxSource ()
 
 @property (nonatomic, retain) NSDictionary *infoDictionary;
-
-- (id)initWithInfo:(NSDictionary *)info;
+@property (nonatomic, retain) NSString *tileJSON;
 
 @end
 
@@ -48,7 +48,12 @@
 
 @implementation RMMapBoxSource
 
-@synthesize infoDictionary=_infoDictionary, imageQuality=_imageQuality, dataQueue=_dataQueue;
+@synthesize infoDictionary=_infoDictionary, tileJSON=_tileJSON, imageQuality=_imageQuality, dataQueue=_dataQueue;
+
+- (id)init
+{
+    return [self initWithMapID:([[UIScreen mainScreen] scale] > 1.0 ? kMapBoxPlaceholderRetinaMapID : kMapBoxPlaceholderNormalMapID)];
+}
 
 - (id)initWithMapID:(NSString *)mapID
 {
@@ -70,6 +75,8 @@
                                                                            options:0
                                                                              error:nil] retain];
 
+        _tileJSON = [tileJSON retain];
+
         id dataObject = nil;
         
         if (mapView && (dataObject = [_infoDictionary objectForKey:@"data"]) && dataObject)
@@ -82,7 +89,7 @@
                     
                     NSMutableString *jsonString = nil;
                     
-                    if (dataURL && (jsonString = [NSMutableString stringWithContentsOfURL:dataURL encoding:NSUTF8StringEncoding error:nil]) && jsonString)
+                    if (dataURL && (jsonString = [NSMutableString brandedStringWithContentsOfURL:dataURL encoding:NSUTF8StringEncoding error:nil]) && jsonString)
                     {
                         if ([jsonString hasPrefix:@"grid("])
                         {
@@ -127,18 +134,6 @@
     return self;
 }
 
-- (id)initWithInfo:(NSDictionary *)info
-{
-    WarnDeprecated();
-
-    if ( ! (self = [super init]))
-        return nil;
-
-    _infoDictionary = [[NSDictionary dictionaryWithDictionary:info] retain];
-
-	return self;
-}
-
 - (id)initWithReferenceURL:(NSURL *)referenceURL
 {
     return [self initWithReferenceURL:referenceURL enablingDataOnMapView:nil];
@@ -154,28 +149,15 @@
                                                                                                         options:NSAnchoredSearch & NSBackwardsSearch
                                                                                                           range:NSMakeRange(0, [[referenceURL absoluteString] length])]];
     
-    if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString stringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
+    if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString brandedStringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
         return [self initWithTileJSON:dataObject enablingDataOnMapView:mapView];
     
-    else if ([[referenceURL pathExtension] isEqualToString:@"plist"])
-    {
-        NSMutableDictionary *mutableInfoDictionary = [NSMutableDictionary dictionaryWithContentsOfURL:referenceURL];
-        
-        if (mutableInfoDictionary)
-        {
-            if ( ! [mutableInfoDictionary objectForKey:@"scheme"])
-                [mutableInfoDictionary setObject:@"tms" forKey:@"scheme"]; // assume older plists are TMS, not XYZ per TileJSON default
-        
-            return [self initWithInfo:mutableInfoDictionary];
-        }
-    }
-
     return nil;
 }
 
 - (id)initWithMapID:(NSString *)mapID enablingDataOnMapView:(RMMapView *)mapView
 {
-    NSString *referenceURLString = [NSString stringWithFormat:@"http://a.tiles.mapbox.com/v3/%@.jsonp", mapID];
+    NSString *referenceURLString = [NSString stringWithFormat:@"http://a.tiles.mapbox.com/v3/%@.json", mapID];
 
     return [self initWithReferenceURL:[NSURL URLWithString:referenceURLString] enablingDataOnMapView:mapView];
 }
@@ -184,10 +166,16 @@
 {
     dispatch_release(_dataQueue);
     [_infoDictionary release];
+    [_tileJSON release];
     [super dealloc];
 }
 
 #pragma mark 
+
+- (NSURL *)tileJSONURL
+{
+    return [NSURL URLWithString:[NSString stringWithFormat:@"http://a.tiles.mapbox.com/v3/%@.json", [self.infoDictionary objectForKey:@"id"]]];
+}
 
 - (NSURL *)URLForTile:(RMTile)tile
 {
