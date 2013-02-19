@@ -2660,10 +2660,14 @@
     {
         if (!correctAllAnnotations || _mapScrollViewIsZooming)
         {
+            
+            @synchronized(_visibleAnnotations){
+
             for (RMAnnotation *annotation in _visibleAnnotations)
                 [self correctScreenPosition:annotation animated:animated];
 
 //            RMLog(@"%d annotations corrected", [visibleAnnotations count]);
+            }
 
             [CATransaction commit];
 
@@ -2683,7 +2687,12 @@
                                                          withProjectedClusterSize:RMProjectedSizeMake(self.clusterAreaSize.width * _metersPerPixel, self.clusterAreaSize.height * _metersPerPixel)
                                                     andProjectedClusterMarkerSize:RMProjectedSizeMake(self.clusterMarkerSize.width * _metersPerPixel, self.clusterMarkerSize.height * _metersPerPixel)
                                                                 findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
-        NSMutableSet *previousVisibleAnnotations = [[NSMutableSet alloc] initWithSet:_visibleAnnotations];
+        
+        @synchronized(_visibleAnnotations){
+
+        NSMutableSet *previousVisibleAnnotations;
+
+        previousVisibleAnnotations = [[NSMutableSet alloc] initWithSet:_visibleAnnotations];
 
         for (RMAnnotation *annotation in annotationsToCorrect)
         {
@@ -2700,6 +2709,7 @@
             if ( ! [_visibleAnnotations containsObject:annotation])
             {
                 [_overlayView addSublayer:annotation.layer];
+                
                 [_visibleAnnotations addObject:annotation];
             }
 
@@ -2725,7 +2735,8 @@
         }
 
         [previousVisibleAnnotations release];
-
+            
+        }//end of _visibleAnnotations synch
 //        RMLog(@"%d annotations on screen, %d total", [overlayView sublayersCount], [annotations count]);
     }
     else
@@ -2804,7 +2815,10 @@
 {
     // sort annotation layer z-indexes so that they overlap properly
     //
-    NSMutableArray *sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
+    NSMutableArray *sortedAnnotations;
+    @synchronized(_visibleAnnotations){
+        sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
+    }
 
     [sortedAnnotations filterUsingPredicate:[NSPredicate predicateWithFormat:@"isUserLocationAnnotation = NO"]];
 
