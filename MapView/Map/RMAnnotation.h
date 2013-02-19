@@ -84,7 +84,7 @@
 @property (nonatomic, assign) BOOL hasBoundingBox;
 
 /** Whether touch events for the annotation's layer are recognized. Defaults to `YES`. */
-@property (nonatomic, assign) BOOL enabled;
+@property (nonatomic, assign, getter=isEnabled) BOOL enabled;
 
 /** @name Representing an Annotation Visually */
 
@@ -116,7 +116,7 @@
 
 /** @name Initializing Annotations */
 
-/** Create an initialize an annotation. 
+/** Create and initialize an annotation. 
 *   @param aMapView The map view on which to place the annotation. 
 *   @param aCoordinate The location for the annotation. 
 *   @param aTitle The annotation's title. 
