@@ -39,8 +39,8 @@
 
 @interface RMMapBoxSource ()
 
-@property (nonatomic, retain) NSDictionary *infoDictionary;
-@property (nonatomic, retain) NSString *tileJSON;
+@property (nonatomic, strong) NSDictionary *infoDictionary;
+@property (nonatomic, strong) NSString *tileJSON;
 
 @end
 
@@ -71,11 +71,11 @@
     {
         _dataQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL);
 
-        _infoDictionary = (NSDictionary *)[[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
-                                                                           options:0
-                                                                             error:nil] retain];
+        _infoDictionary = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:[tileJSON dataUsingEncoding:NSUTF8StringEncoding]
+                                                                          options:0
+                                                                            error:nil];
 
-        _tileJSON = [tileJSON retain];
+        _tileJSON = tileJSON;
 
         id dataObject = nil;
         
@@ -165,9 +165,6 @@
 - (void)dealloc
 {
     dispatch_release(_dataQueue);
-    [_infoDictionary release];
-    [_tileJSON release];
-    [super dealloc];
 }
 
 #pragma mark 

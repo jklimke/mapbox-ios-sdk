@@ -1,19 +1,21 @@
 Pod::Spec.new do |m|
 
   m.name    = 'MapBox'
-  m.version = '0.5.2'
+  m.version = '1.0.0'
 
   m.summary     = 'Open source alternative to MapKit.'
   m.description = 'Open source alternative to MapKit supporting custom tile sources, offline use, and complete cache control.'
   m.homepage    = 'http://mapbox.com/mobile'
   m.license     = 'BSD'
-  m.author      = { 'Justin R. Miller' => 'justin@mapbox.com' }
+  m.author      = { 'MapBox' => 'ios@mapbox.com' }
 
-  m.source = { :git => 'https://github.com/mapbox/mapbox-ios-sdk.git' }
+  m.source = { :git => 'https://github.com/mapbox/mapbox-ios-sdk.git', :branch => 'develop' }
 
   m.platform = :ios, '5.0'
 
   m.source_files = 'Proj4/*.h', 'MapView/Map/*.{h,c,m}'
+
+  m.requires_arc = true
 
   m.prefix_header_file = 'MapView/MapView_Prefix.pch'
 
@@ -43,7 +45,6 @@ Pod::Spec.new do |m|
       '--ignore', 'Proj4',
       '--ignore', 'RMAttributionViewController.h',
       '--ignore', 'RMBingSource.h',
-      '--ignore', 'RMConfiguration.h',
       '--ignore', 'RMCoordinateGridSource.h',
       '--ignore', 'RMDBMapSource.h',
       '--ignore', 'RMFoundation.h',
@@ -84,6 +85,6 @@ Pod::Spec.new do |m|
 
   m.dependency 'FMDB', '2.0'
   m.dependency 'GRMustache', '5.4.3'
-  m.dependency 'SMCalloutView', :git => 'git://github.com/nfarina/calloutview.git', :commit => 'c00a90c'
+  m.dependency 'SMCalloutView', '1.1'
 
 end

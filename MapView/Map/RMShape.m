@@ -1,7 +1,7 @@
 ///
 //  RMShape.m
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -92,20 +92,11 @@
     scaleLineDash = NO;
     isFirstPoint = YES;
 
-    points = [[NSMutableArray array] retain];
+    points = [NSMutableArray array];
 
     [(id)self setValue:[[UIScreen mainScreen] valueForKey:@"scale"] forKey:@"contentsScale"];
 
     return self;
-}
-
-- (void)dealloc
-{
-    mapView = nil;
-    [bezierPath release]; bezierPath = nil;
-    [shapeLayer release]; shapeLayer = nil;
-    [points release]; points = nil;
-    [super dealloc];
 }
 
 - (id <CAAction>)actionForKey:(NSString *)key
@@ -179,8 +170,6 @@
         // calculate the bounds of the scaled path
         CGRect boundsInMercators = scaledPath.bounds;
         nonClippedBounds = CGRectInset(boundsInMercators, -scaledLineWidth - (2 * shapeLayer.shadowRadius), -scaledLineWidth - (2 * shapeLayer.shadowRadius));
-
-        [scaledPath release];
     }
 
     // if the path is not scaled, nonClippedBounds stay the same as in the previous invokation
@@ -292,7 +281,7 @@
 
 - (void)addCurveToProjectedPoint:(RMProjectedPoint)point controlPoint1:(RMProjectedPoint)controlPoint1 controlPoint2:(RMProjectedPoint)controlPoint2 withDrawing:(BOOL)isDrawing
 {
-    [points addObject:[[[CLLocation alloc] initWithLatitude:[mapView projectedPointToCoordinate:point].latitude longitude:[mapView projectedPointToCoordinate:point].longitude] autorelease]];
+    [points addObject:[[CLLocation alloc] initWithLatitude:[mapView projectedPointToCoordinate:point].latitude longitude:[mapView projectedPointToCoordinate:point].longitude]];
 
     if (isFirstPoint)
     {

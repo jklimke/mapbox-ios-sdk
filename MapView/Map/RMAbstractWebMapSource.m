@@ -1,7 +1,7 @@
 //
 // RMAbstractWebMapSource.m
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -82,8 +82,6 @@
     {
         [[NSNotificationCenter defaultCenter] postNotificationName:RMTileRequested object:[NSNumber numberWithUnsignedLongLong:RMTileKey(tile)]];
     });
-
-    [tileCache retain];
 
     NSArray *URLs = [self URLsForTile:tile];
 
@@ -168,8 +166,6 @@
 
     if (image && self.isCacheable)
         [tileCache addImage:image forTile:tile withCacheKey:[self uniqueTilecacheKey]];
-
-    [tileCache release];
 
     dispatch_async(dispatch_get_main_queue(), ^(void)
     {
