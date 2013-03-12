@@ -1,7 +1,7 @@
 //
 //  RMMarker.m
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -161,14 +161,6 @@
             [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@/%@", kCachesPath, filePath] error:nil];
 }
 
-- (void)dealloc
-{
-    self.label = nil;
-    self.textForegroundColor = nil;
-    self.textBackgroundColor = nil;
-    [super dealloc];
-}
-
 #pragma mark -
 
 - (void)replaceUIImage:(UIImage *)image
@@ -191,30 +183,25 @@
         return;
 
     if (label != nil)
-    {
         [[label layer] removeFromSuperlayer];
-        [label release]; label = nil;
-    }
 
     if (aView != nil)
     {
-        label = [aView retain];
+        label = aView;
         [self addSublayer:[label layer]];
     }
 }
 
 - (void)setTextBackgroundColor:(UIColor *)newTextBackgroundColor
 {
-    [textBackgroundColor autorelease];
-    textBackgroundColor = [newTextBackgroundColor retain];
+    textBackgroundColor = newTextBackgroundColor;
 
     self.label.backgroundColor = textBackgroundColor;
 }
 
 - (void)setTextForegroundColor:(UIColor *)newTextForegroundColor
 {
-    [textForegroundColor autorelease];
-    textForegroundColor = [newTextForegroundColor retain];
+    textForegroundColor = newTextForegroundColor;
 
     if ([self.label respondsToSelector:@selector(setTextColor:)])
         ((UILabel *)self.label).textColor = textForegroundColor;
@@ -259,7 +246,6 @@
     [aLabel setText:text];
 
     [self setLabel:aLabel];
-    [aLabel release];
 }
 
 - (void)toggleLabel

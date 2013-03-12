@@ -91,7 +91,7 @@
 {
     mapID = (mapID ? mapID : (([[UIScreen mainScreen] scale] > 1.0 ? kMapBoxPlaceholderRetinaMapID : kMapBoxPlaceholderNormalMapID)));
 
-    RMMapBoxSource *tileSource = [[[RMMapBoxSource alloc] initWithMapID:mapID enablingDataOnMapView:self] autorelease];
+    RMMapBoxSource *tileSource = [[RMMapBoxSource alloc] initWithMapID:mapID enablingDataOnMapView:self];
 
     self.tileSource = tileSource;
 

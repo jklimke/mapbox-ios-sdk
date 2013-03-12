@@ -1,7 +1,7 @@
 ///
 //  RMCircle.m
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -76,12 +76,7 @@
 
 - (void)dealloc
 {
-    mapView = nil;
-    [shapeLayer release]; shapeLayer = nil;
     CGPathRelease(circlePath); circlePath = NULL;
-    [lineColor release]; lineColor = nil;
-    [fillColor release]; fillColor = nil;
-    [super dealloc];
 }
 
 #pragma mark -
@@ -160,8 +155,7 @@
 {
     if (lineColor != newLineColor)
     {
-        [lineColor release];
-        lineColor = [newLineColor retain];
+        lineColor = newLineColor;
         [self updateCirclePathAnimated:NO];
     }
 }
@@ -170,8 +164,7 @@
 {
     if (fillColor != newFillColor)
     {
-        [fillColor release];
-        fillColor = [newFillColor retain];
+        fillColor = newFillColor;
         [self updateCirclePathAnimated:NO];
     }
 }

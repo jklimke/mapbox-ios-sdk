@@ -1,7 +1,7 @@
 //
 //  RMMapView.h
 //
-// Copyright (c) 2008-2012, Route-Me Contributors
+// Copyright (c) 2008-2013, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,7 @@ typedef enum : NSUInteger {
 *   A map view sends messages to its delegate regarding the loading of map data and changes in the portion of the map being displayed. The delegate also manages the annotation layers used to highlight points of interest on the map.
 *
 *   The delegate should implement the methods of the RMMapViewDelegate protocol. */
-@property (nonatomic, assign) IBOutlet id <RMMapViewDelegate>delegate;
+@property (nonatomic, weak) IBOutlet id <RMMapViewDelegate>delegate;
 
 #pragma mark - View properties
 
@@ -124,7 +124,10 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) NSUInteger missingTilesDepth;
 
 /** A custom, static view to use behind the map tiles. The default behavior is to use grid imagery that moves with map panning like MapKit. */
-@property (nonatomic, retain) UIView *backgroundView;
+@property (nonatomic, strong) UIView *backgroundView;
+
+/** A custom image to use behind the map tiles. The default behavior is to show the default `backgroundView` and not a static image. */
+- (void)setBackgroundImage:(UIImage *)backgroundImage;
 
 /** A Boolean value indicating whether to draw tile borders and z/x/y numbers on tile images for debugging purposes. Defaults to `NO`. */
 @property (nonatomic, assign) BOOL debugTiles;
@@ -135,6 +138,9 @@ typedef enum : NSUInteger {
 #pragma mark - Initializers
 
 /** @name Initializing a Map View */
+
+/** Initialize a map view with a given frame. A default watermarked MapBox map layer will be used, which will require an internet connection. If your application will be operating offline from the start, you should create an offline tile source and instead use the initWithFrame:andTilesource: initializer. */
+- (id)initWithFrame:(CGRect)frame;
 
 /** Initialize a map view with a given frame and tile source. 
 *   @param frame The frame with which to initialize the map view. 
@@ -302,10 +308,10 @@ typedef enum : NSUInteger {
 /** @name Annotating the Map */
 
 /** The annotations currently added to the map. Includes user location annotations, if any. */
-@property (nonatomic, readonly) NSArray *annotations;
+@property (nonatomic, weak, readonly) NSArray *annotations;
 
 /** The annotations currently visible on the map. May include annotations currently shown in clusters. */
-@property (nonatomic, readonly) NSArray *visibleAnnotations;
+@property (nonatomic, weak, readonly) NSArray *visibleAnnotations;
 
 /** Add an annotation to the map. 
 *   @param annotation The annotation to add. */
@@ -348,16 +354,19 @@ typedef enum : NSUInteger {
 - (void)deselectAnnotation:(RMAnnotation *)annotation animated:(BOOL)animated;
 
 /** The annotation that is currently selected. */
-@property (nonatomic, retain) RMAnnotation *selectedAnnotation;
+@property (nonatomic, strong) RMAnnotation *selectedAnnotation;
 
 #pragma mark - TileSources
 
-@property (nonatomic, retain) RMQuadTree *quadTree;
+@property (nonatomic, strong) RMQuadTree *quadTree;
 
 /** @name Configuring Annotation Clustering */
 
 /** Whether to enable clustering of map point annotations. Defaults to `NO`. */
 @property (nonatomic, assign) BOOL clusteringEnabled;
+
+/** Whether to order markers on the z-axis according to increasing y-position. Defaults to `YES`. */
+@property (nonatomic, assign) BOOL orderMarkersByYPosition;
 
 /** Whether to position cluster markers at the weighted center of the points they represent. If `YES`, position clusters in weighted fashion. If `NO`, position them on a rectangular grid. Defaults to `YES`. */
 @property (nonatomic, assign) BOOL positionClusterMarkersAtTheGravityCenter;
@@ -368,15 +377,15 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign) CGSize clusterMarkerSize;
 @property (nonatomic, assign) CGSize clusterAreaSize;
 
-@property (nonatomic, readonly) RMTileSourcesContainer *tileSourcesContainer;
+@property (nonatomic, weak, readonly) RMTileSourcesContainer *tileSourcesContainer;
 
 /** @name Managing Tile Sources */
 
 /** The first tile source of a map view, ordered from bottom to top. */
-@property (nonatomic, retain) id <RMTileSource> tileSource;
+@property (nonatomic, strong) id <RMTileSource> tileSource;
 
 /** All of the tile sources for a map view, ordered bottom to top. */
-@property (nonatomic, retain) NSArray *tileSources;
+@property (nonatomic, strong) NSArray *tileSources;
 
 /** Add a tile source to a map view above the current tile sources. 
 *   @param tileSource The tile source to add. */
@@ -423,7 +432,7 @@ typedef enum : NSUInteger {
 /** @name Managing Tile Caching Behavior */
 
 /** The tile cache for the map view, typically composed of both an in-memory RMMemoryCache and a disk-based RMDatabaseCache. */
-@property (nonatomic, retain)   RMTileCache *tileCache;
+@property (nonatomic, strong)   RMTileCache *tileCache;
 
 /** Clear all tile images from the caching system. */
 -(void)removeAllCachedImages;
@@ -431,8 +440,8 @@ typedef enum : NSUInteger {
 #pragma mark - Conversions
 
 // projections to convert from latitude/longitude to meters, from projected meters to tile coordinates
-@property (nonatomic, readonly) RMProjection *projection;
-@property (nonatomic, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;
+@property (nonatomic, weak, readonly) RMProjection *projection;
+@property (nonatomic, weak, readonly) id <RMMercatorToTileProjection> mercatorToTileProjection;
 
 /** @name Converting Map Coordinates */
 
@@ -514,8 +523,8 @@ typedef enum : NSUInteger {
 - (void)setUserTrackingMode:(RMUserTrackingMode)mode animated:(BOOL)animated;
 
 
-@property (nonatomic, assign) RMMapScrollView *mapScrollView;
-@property (nonatomic, assign) RMMapOverlayView *overlayView;
+@property (nonatomic) RMMapScrollView *mapScrollView;
+@property (nonatomic) RMMapOverlayView *overlayView;
 
 @property (nonatomic, assign) CGAffineTransform mapTransform;
 @property (nonatomic, assign) CATransform3D annotationTransform;
