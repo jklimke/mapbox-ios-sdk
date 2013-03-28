@@ -502,7 +502,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign)   BOOL showsUserLocation;
 
 /** The annotation object representing the user’s current location. (read-only) */
-@property (nonatomic, readonly) RMUserLocation *userLocation;
+@property (nonatomic) RMUserLocation *userLocation;
 
 /** A Boolean value indicating whether the device’s current location is visible in the map view. (read-only)
 *
@@ -528,5 +528,7 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, assign) CGAffineTransform mapTransform;
 @property (nonatomic, assign) CATransform3D annotationTransform;
+
+@property (nonatomic) RMAnnotation * accuracyCircleAnnotation;
 
 @end

@@ -174,7 +174,7 @@
 
     CLLocationManager *_locationManager;
 
-    RMAnnotation *_accuracyCircleAnnotation;
+    //RMAnnotation *_accuracyCircleAnnotation;
     RMAnnotation *_trackingHaloAnnotation;
 
     UIImageView *_userLocationTrackingView;
@@ -223,6 +223,7 @@
 @synthesize overlayView = _overlayView;
 @synthesize mapTransform = _mapTransform;
 @synthesize annotationTransform = _annotationTransform;
+@synthesize accuracyCircleAnnotation=_accuracyCircleAnnotation;
 
 #pragma mark -
 #pragma mark Initialization
