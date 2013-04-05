@@ -39,7 +39,7 @@
 /** The current location of the device. (read-only)
 *
 *   This property contains `nil` if the map view is not currently showing the user location or if the user’s location has not yet been determined. */
-@property (nonatomic, readonly) CLLocation *location;
+@property (nonatomic) CLLocation *location;
 
 /** The heading of the user location. (read-only)
 *

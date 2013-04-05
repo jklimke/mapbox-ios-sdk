@@ -139,7 +139,7 @@ typedef enum : NSUInteger {
 
 /** @name Initializing a Map View */
 
-/** Initialize a map view with a given frame. A default watermarked MapBox map layer will be used, which will require an internet connection. If your application will be operating offline from the start, you should create an offline tile source and instead use the initWithFrame:andTilesource: initializer. */
+/** Initialize a map view with a given frame. A default watermarked MapBox map tile source will be used. */
 - (id)initWithFrame:(CGRect)frame;
 
 /** Initialize a map view with a given frame and tile source. 
@@ -177,6 +177,7 @@ typedef enum : NSUInteger {
 - (id) superInitWithFrame: (CGRect) frame;
 
 + (UIImage *)resourceImageNamed:(NSString *)imageName;
++ (NSString *)pathForBundleResourceNamed:(NSString *)name ofType:(NSString *)extension;
 
 #pragma mark - Movement
 
@@ -502,7 +503,7 @@ typedef enum : NSUInteger {
 @property (nonatomic, assign)   BOOL showsUserLocation;
 
 /** The annotation object representing the user’s current location. (read-only) */
-@property (nonatomic, readonly) RMUserLocation *userLocation;
+@property (nonatomic) RMUserLocation *userLocation;
 
 /** A Boolean value indicating whether the device’s current location is visible in the map view. (read-only)
 *
@@ -528,5 +529,7 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, assign) CGAffineTransform mapTransform;
 @property (nonatomic, assign) CATransform3D annotationTransform;
+
+@property (nonatomic) RMAnnotation * accuracyCircleAnnotation;
 
 @end
