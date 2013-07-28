@@ -28,10 +28,13 @@ Pod::Spec.new do |m|
         raise ::Pod::Informative, "Failed to generate MapBox resources bundle"
       end
     end
+
     File.open(library.copy_resources_script_path, 'a') do |file|
       file.puts "install_resource 'Resources/MapBox.bundle'"
     end
   end
+
+  m.resource = 'MapBox.bundle'
 
   m.documentation = {
     :html => 'http://mapbox.com/mapbox-ios-sdk/api/',
