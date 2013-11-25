@@ -1755,15 +1755,21 @@
         [self deselectAnnotation:_currentAnnotation animated:NO];
 
         _currentAnnotation = anAnnotation;
-
-        if (anAnnotation.layer.canShowCallout && anAnnotation.title)
+        
+        if(anAnnotation.layer.canShowCallout)
         {
             _currentCallout = [SMCalloutView new];
-
             _currentCallout.backgroundView = [SMCalloutBackgroundView systemBackgroundView];
 
-            _currentCallout.title    = anAnnotation.title;
-            _currentCallout.subtitle = anAnnotation.subtitle;
+            if (anAnnotation.layer.calloutContentView)
+            {
+                _currentCallout.contentView = anAnnotation.layer.calloutContentView;
+            }
+            else if (anAnnotation.title)
+            {
+                _currentCallout.title    = anAnnotation.title;
+                _currentCallout.subtitle = anAnnotation.subtitle;
+            }
 
             _currentCallout.calloutOffset = anAnnotation.layer.calloutOffset;
 
