@@ -147,7 +147,7 @@
 
         UIImage *tileImage = nil;
 
-        if (zoom >= _tileSource.minZoom && zoom <= _tileSource.maxZoom)
+        if (zoom >= _tileSource.minZoom && zoom <= _tileSource.maxZoom && [_tileSource tileSourceHasTile: RMTileMake(x, y, zoom)])
         {
             RMDatabaseCache *databaseCache = nil;
 
@@ -165,9 +165,9 @@
             {
                 // for non-local tiles, consult cache directly first (if possible)
                 //
-//                tileImage = [[_mapView tileCache] cachedImage:RMTileMake(x, y, zoom) withCacheKey:[_tileSource uniqueTilecacheKey]];
-                //tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
-                //if ( ! tileImage)
+                tileImage = [[_mapView tileCache] cachedImage:RMTileMake(x, y, zoom) withCacheKey:[_tileSource uniqueTilecacheKey]];
+                tileImage = [_tileSource imageForTile:RMTileMake(x, y, zoom) inCache:[_mapView tileCache]];
+                if ( ! tileImage)
 
                 if (_tileSource.isCacheable)
                     tileImage = [[_mapView tileCache] cachedImage:RMTileMake(x, y, zoom) withCacheKey:[_tileSource uniqueTilecacheKey]];
