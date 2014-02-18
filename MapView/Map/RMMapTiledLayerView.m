@@ -96,7 +96,7 @@
     CGRect rect   = CGContextGetClipBoundingBox(context);
     CGRect bounds = self.bounds;
     short zoom    = log2(bounds.size.width / rect.size.width);
-
+    BOOL layerContainedTile = YES;
 //    NSLog(@"drawLayer: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 
     if (self.useSnapshotRenderer)
@@ -223,6 +223,13 @@
                     float nextTileX = floor(nextX),
                           nextTileY = floor(nextY);
 
+                    if(![_tileSource tileSourceHasTile: RMTileMake(nextX, nextY, currentZoom)]){
+                        currentTileDepth++;
+                        currentZoom = zoom - currentTileDepth;
+                        layerContainedTile = NO;
+                        continue;
+                    }
+                    layerContainedTile = YES;
                     tileImage = [_tileSource imageForTile:RMTileMake((int)nextTileX, (int)nextTileY, currentZoom) inCache:[_mapView tileCache]];
 
                     if (IS_VALID_TILE_IMAGE(tileImage))
@@ -307,7 +314,9 @@
         }
         else
         {
-            NSLog(@"Invalid image for {%d,%d} @ %d", x, y, zoom);
+            if(!layerContainedTile){
+                NSLog(@"Invalid image for {%d,%d} @ %d", x, y, zoom);
+            }
         }
 
         UIGraphicsPopContext();
