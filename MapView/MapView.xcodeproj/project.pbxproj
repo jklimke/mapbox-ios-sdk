@@ -48,6 +48,7 @@
 		25757F501291C8640083D504 /* RMCircle.m in Sources */ = {isa = PBXBuildFile; fileRef = 25757F4E1291C8640083D504 /* RMCircle.m */; };
 		96492C400FA8AD3400EBA6D2 /* RMGlobalConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B1EB26C610B5D8E6009F8658 /* RMNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = B1EB26C510B5D8E6009F8658 /* RMNotifications.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B51D476C18B3A8DD003778E6 /* LoadingTile.png in Resources */ = {isa = PBXBuildFile; fileRef = B51D476B18B3A8BF003778E6 /* LoadingTile.png */; };
 		B8474BA40EB40094006A0BC1 /* RMDatabaseCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B8474B980EB40094006A0BC1 /* RMDatabaseCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B8474BA50EB40094006A0BC1 /* RMDatabaseCache.m in Sources */ = {isa = PBXBuildFile; fileRef = B8474B990EB40094006A0BC1 /* RMDatabaseCache.m */; };
 		B8474BC10EB4019A006A0BC1 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B8474BC00EB4019A006A0BC1 /* libsqlite3.dylib */; };
@@ -230,6 +231,7 @@
 		32CA4F630368D1EE00C91783 /* MapView_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapView_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		96492C3F0FA8AD3400EBA6D2 /* RMGlobalConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMGlobalConstants.h; sourceTree = "<group>"; };
 		B1EB26C510B5D8E6009F8658 /* RMNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMNotifications.h; sourceTree = "<group>"; };
+		B51D476B18B3A8BF003778E6 /* LoadingTile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = LoadingTile.png; path = Map/Resources/LoadingTile.png; sourceTree = "<group>"; };
 		B83E64B60E80E73F001663B6 /* RMPixel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMPixel.h; sourceTree = "<group>"; };
 		B83E64B70E80E73F001663B6 /* RMPixel.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RMPixel.c; sourceTree = "<group>"; };
 		B83E64D00E80E73F001663B6 /* RMTileCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RMTileCache.h; sourceTree = "<group>"; };
@@ -635,6 +637,7 @@
 		DD932BC1165C287600D69D49 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B51D476B18B3A8BF003778E6 /* LoadingTile.png */,
 				DD280D1216EFDDD30014B549 /* examples.map-z2effxa8.json */,
 				DD932BA5165C287000D69D49 /* mapbox.png */,
 				DD932BA6165C287000D69D49 /* mapbox@2x.png */,
@@ -857,6 +860,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD932BB3165C287000D69D49 /* mapbox.png in Resources */,
+				B51D476C18B3A8DD003778E6 /* LoadingTile.png in Resources */,
 				DD932BB4165C287000D69D49 /* mapbox@2x.png in Resources */,
 				DD932BB7165C287000D69D49 /* HeadingAngleSmall.png in Resources */,
 				DD07A23A17F3AF9800E420B2 /* HeadingAngleMaskLarge.png in Resources */,
