@@ -572,7 +572,7 @@
                 views = @{ @"logoBug" : _logoBug };
             }
 
-            /*[viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:formatString
+            [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:formatString
                                                                                         options:0
                                                                                         metrics:@{ @"bottomSpacing" : @(bottomSpacing) }
                                                                                           views:views]];
@@ -580,8 +580,7 @@
             [viewController.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-leftSpacing-[logoBug]"
                                                                                         options:0
                                                                                         metrics:@{ @"leftSpacing" : @(leftSpacing) }
-                                                                                          views:views]];
-             */
+                                                                                          views:views]];           
         }
     }
 
@@ -2654,6 +2653,7 @@
     else if ( ! showLogoBug && _logoBug)
     {
         [_logoBug removeFromSuperview];
+        _logoBug = nil;
     }
 
     _showLogoBug = showLogoBug;
