@@ -86,6 +86,9 @@
 @property (nonatomic, readonly) RMMapView* mapView;
 
 
+/** An additional pixel area around the shape that is applied to touch hit testing events. Defaults to none. */
+@property (nonatomic, assign) CGFloat additionalTouchPadding;
+
 /** @name Drawing Shapes */
 
 /** Move the drawing pen to a projected point. 
