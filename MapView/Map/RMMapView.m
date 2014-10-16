@@ -3014,6 +3014,9 @@
         
 
         previousVisibleAnnotations = nil;
+            
+
+        [self correctOrderingOfAllAnnotationsAndLockVisibleAnnotations: NO];
         }
         //        RMLog(@"%d annotations on screen, %d total", [overlayView sublayersCount], [annotations count]);
     }
@@ -3077,9 +3080,10 @@
 //                RMLog(@"%d annotations corrected", [visibleAnnotations count]);
             }
         }
+        [self correctOrderingOfAllAnnotationsAndLockVisibleAnnotations: YES];
     }
 
-    [self correctOrderingOfAllAnnotations];
+
 
     [CATransaction commit];
 }
@@ -3091,13 +3095,22 @@
 
 - (void)correctOrderingOfAllAnnotations
 {
+    [self correctOrderingOfAllAnnotationsAndLockVisibleAnnotations: YES];
+}
+
+- (void)correctOrderingOfAllAnnotationsAndLockVisibleAnnotations: (BOOL) lock
+{
     if ( ! _orderMarkersByYPosition)
         return;
 
     // sort annotation layer z-indexes so that they overlap properly
     //
     NSMutableArray *sortedAnnotations;
-    @synchronized(_visibleAnnotations){
+    if(lock){
+        @synchronized(_visibleAnnotations){
+            sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
+        }
+    }else{
         sortedAnnotations = [NSMutableArray arrayWithArray:[_visibleAnnotations allObjects]];
     }
 
