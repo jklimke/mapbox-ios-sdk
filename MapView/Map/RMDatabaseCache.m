@@ -26,8 +26,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 #import "RMDatabaseCache.h"
-#import "FMDatabase.h"
-#import "FMDatabaseQueue.h"
+#import "FMDB.h"
 #import "RMTileImage.h"
 #import "RMTile.h"
 
@@ -93,7 +92,7 @@
     [_queue inDatabase:^(FMDatabase *db) {
         [[db executeQuery:@"PRAGMA synchronous=OFF"] close];
         [[db executeQuery:@"PRAGMA journal_mode=OFF"] close];
-        [[db executeQuery:@"PRAGMA cache-size=100"] close];
+        [[db executeQuery:@"PRAGMA cache_size=100"] close];
         [[db executeQuery:@"PRAGMA count_changes=OFF"] close];
         [db executeUpdate:@"CREATE TABLE IF NOT EXISTS ZCACHE (tile_hash INTEGER NOT NULL, cache_key VARCHAR(25) NOT NULL, last_used DOUBLE NOT NULL, data BLOB NOT NULL)"];
         [db executeUpdate:@"CREATE UNIQUE INDEX IF NOT EXISTS main_index ON ZCACHE(tile_hash, cache_key)"];
@@ -111,8 +110,6 @@
     _writeQueue = [NSOperationQueue new];
     [_writeQueue setMaxConcurrentOperationCount:1];
     _writeQueueLock = [NSRecursiveLock new];
-
-	RMLog(@"Opening database at %@", path);
 
     _queue = [FMDatabaseQueue databaseQueueWithPath:path];
 
@@ -254,7 +251,11 @@
 {
     // TODO: Converting the image here (again) is not so good...
 	NSData *data = UIImageJPEGRepresentation(image,0.8);
+    [self addDiskCachedImageData:UIImagePNGRepresentation(image) forTile:tile withCacheKey:aCacheKey];
+}
 
+- (void)addDiskCachedImageData:(NSData *)data forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
+{
     if (_capacity != 0)
     {
         NSUInteger tilesInDb = [self count];
@@ -314,7 +315,7 @@
 
     [_queue inDatabase:^(FMDatabase *db)
      {
-         FMResultSet *results = [db executeQuery:@"SELECT COUNT(tile_hash) FROM ZCACHE"];
+         FMResultSet *results = [db executeQuery:@"SELECT COUNT(*) FROM ZCACHE"];
 
          if ([results next])
              count = [results intForColumnIndex:0];
