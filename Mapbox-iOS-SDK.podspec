@@ -11,7 +11,7 @@ Pod::Spec.new do |m|
   m.screenshot       = 'https://raw.github.com/mapbox/mapbox-ios-sdk/packaging/screenshot.png'
   m.social_media_url = 'https://twitter.com/Mapbox'
 
-  m.source = { :git => 'https://github.com/jklimke/mapbox-ios-sdk.git', :branch => 'smartmap-mapbox_update' }
+  m.source = { :git => 'https://github.com/jklimke/mapbox-ios-sdk.git', :branch => 'smartmap-mapbox' }
 
   m.platform              = :ios
   m.ios.deployment_target = '5.0'
