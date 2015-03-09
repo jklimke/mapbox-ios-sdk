@@ -858,9 +858,9 @@
         .longitude = (northEast.longitude + southWest.longitude) / 2
     };
 
-    RMProjectedPoint myOrigin = [_projection coordinateToProjectedPoint:midpoint];
-    RMProjectedPoint southWestPoint = [_projection coordinateToProjectedPoint:southWest];
-    RMProjectedPoint northEastPoint = [_projection coordinateToProjectedPoint:northEast];
+    RMProjectedPoint myOrigin = [[self projection] coordinateToProjectedPoint:midpoint];
+    RMProjectedPoint southWestPoint = [[self projection] coordinateToProjectedPoint:southWest];
+    RMProjectedPoint northEastPoint = [[self projection] coordinateToProjectedPoint:northEast];
     RMProjectedPoint myPoint = {
         .x = northEastPoint.x - southWestPoint.x,
         .y = northEastPoint.y - southWestPoint.y
@@ -924,8 +924,8 @@
 
 - (void)setConstraintsSouthWest:(CLLocationCoordinate2D)southWest northEast:(CLLocationCoordinate2D)northEast
 {
-    RMProjectedPoint projectedSouthWest = [_projection coordinateToProjectedPoint:southWest];
-    RMProjectedPoint projectedNorthEast = [_projection coordinateToProjectedPoint:northEast];
+    RMProjectedPoint projectedSouthWest = [[self projection] coordinateToProjectedPoint:southWest];
+    RMProjectedPoint projectedNorthEast = [[self projection] coordinateToProjectedPoint:northEast];
 
     [self setProjectedConstraintsSouthWest:projectedSouthWest northEast:projectedNorthEast];
 }
@@ -962,7 +962,7 @@
     }
     else
     {
-        _constrainingProjectedBounds = _projection.planetBounds;
+        _constrainingProjectedBounds = [self projection].planetBounds;
     }
 }
 
@@ -971,7 +971,7 @@
 
 - (CLLocationCoordinate2D)centerCoordinate
 {
-    return [_projection projectedPointToCoordinate:[self centerProjectedPoint]];
+    return [[self projection] projectedPointToCoordinate:[self centerProjectedPoint]];
 }
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate
@@ -981,7 +981,7 @@
 
 - (void)setCenterCoordinate:(CLLocationCoordinate2D)centerCoordinate animated:(BOOL)animated
 {
-    [self setCenterProjectedPoint:[_projection coordinateToProjectedPoint:centerCoordinate] animated:animated];
+    [self setCenterProjectedPoint:[[self projection] coordinateToProjectedPoint:centerCoordinate] animated:animated];
 }
 
 // ===
@@ -990,7 +990,7 @@
 {
     CGPoint center = CGPointMake(_mapScrollView.contentOffset.x + _mapScrollView.bounds.size.width/2.0, _mapScrollView.contentSize.height - (_mapScrollView.contentOffset.y + _mapScrollView.bounds.size.height/2.0));
 
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
     RMProjectedPoint normalizedProjectedPoint;
     normalizedProjectedPoint.x = (center.x * _metersPerPixel) - fabs(planetBounds.origin.x);
     normalizedProjectedPoint.y = (center.y * _metersPerPixel) - fabs(planetBounds.origin.y);
@@ -1014,7 +1014,7 @@
 
 //    RMLog(@"Current contentSize: {%.0f,%.0f}, zoom: %f", mapScrollView.contentSize.width, mapScrollView.contentSize.height, self.zoom);
 
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
 	RMProjectedPoint normalizedProjectedPoint;
 	normalizedProjectedPoint.x = centerProjectedPoint.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = centerProjectedPoint.y + fabs(planetBounds.origin.y);
@@ -1052,7 +1052,7 @@
 {
     CGPoint bottomLeft = CGPointMake(_mapScrollView.contentOffset.x, _mapScrollView.contentSize.height - (_mapScrollView.contentOffset.y + _mapScrollView.bounds.size.height));
 
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
     RMProjectedRect normalizedProjectedRect;
     normalizedProjectedRect.origin.x = (bottomLeft.x * _metersPerPixel) - fabs(planetBounds.origin.x);
     normalizedProjectedRect.origin.y = (bottomLeft.y * _metersPerPixel) - fabs(planetBounds.origin.y);
@@ -1072,7 +1072,7 @@
     if (_constrainMovement)
         boundsRect = [self fitProjectedRect:boundsRect intoRect:_constrainingProjectedBounds];
 
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
 	RMProjectedPoint normalizedProjectedPoint;
 	normalizedProjectedPoint.x = boundsRect.origin.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = boundsRect.origin.y + fabs(planetBounds.origin.y);
@@ -1249,7 +1249,7 @@
     if (northEast.latitude == southWest.latitude && northEast.longitude == southWest.longitude) // There are no bounds, probably only one marker.
     {
         RMProjectedRect zoomRect;
-        RMProjectedPoint myOrigin = [_projection coordinateToProjectedPoint:southWest];
+        RMProjectedPoint myOrigin = [[self projection] coordinateToProjectedPoint:southWest];
 
         // Default is with scale = 2.0 * mercators/pixel
         zoomRect.size.width = [self bounds].size.width * 2.0;
@@ -1268,9 +1268,9 @@
             .longitude = (northEast.longitude + southWest.longitude) / 2
         };
 
-        RMProjectedPoint myOrigin = [_projection coordinateToProjectedPoint:midpoint];
-        RMProjectedPoint southWestPoint = [_projection coordinateToProjectedPoint:southWest];
-        RMProjectedPoint northEastPoint = [_projection coordinateToProjectedPoint:northEast];
+        RMProjectedPoint myOrigin = [[self projection] coordinateToProjectedPoint:midpoint];
+        RMProjectedPoint southWestPoint = [[self projection] coordinateToProjectedPoint:southWest];
+        RMProjectedPoint northEastPoint = [[self projection] coordinateToProjectedPoint:northEast];
         RMProjectedPoint myPoint = {
             .x = northEastPoint.x - southWestPoint.x,
             .y = northEastPoint.y - southWestPoint.y
@@ -1535,7 +1535,7 @@
         return;
     }
 
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
     double currentMetersPerPixel = planetBounds.size.width / aScrollView.contentSize.width;
 
     CGPoint bottomLeft = CGPointMake((*aContentOffset).x,
@@ -1566,7 +1566,7 @@
     if ( ! _constrainMovement)
         return;
 
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
     double currentMetersPerPixel = planetBounds.size.width / (*aContentSize).width;
 
     RMProjectedSize projectedSize;
@@ -1612,7 +1612,7 @@
 //    RMLog(@"contentSize: {%.0f,%.0f} -> {%.0f,%.0f}", _lastContentSize.width, _lastContentSize.height, mapScrollView.contentSize.width, mapScrollView.contentSize.height);
 //    RMLog(@"isZooming: %d, scrollview.zooming: %d", _mapScrollViewIsZooming, mapScrollView.zooming);
 
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
     _metersPerPixel = planetBounds.size.width / _mapScrollView.contentSize.width;
 
     _zoom = log2f(_mapScrollView.zoomScale);
@@ -2765,7 +2765,7 @@
 
 - (CGPoint)projectedPointToPixel:(RMProjectedPoint)projectedPoint
 {
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
     RMProjectedPoint normalizedProjectedPoint;
 	normalizedProjectedPoint.x = projectedPoint.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = projectedPoint.y + fabs(planetBounds.origin.y);
@@ -2780,12 +2780,12 @@
 
 - (CGPoint)coordinateToPixel:(CLLocationCoordinate2D)coordinate
 {
-    return [self projectedPointToPixel:[_projection coordinateToProjectedPoint:coordinate]];
+    return [self projectedPointToPixel:[[self projection] coordinateToProjectedPoint:coordinate]];
 }
 
 - (RMProjectedPoint)pixelToProjectedPoint:(CGPoint)pixelCoordinate
 {
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
     RMProjectedPoint normalizedProjectedPoint;
     normalizedProjectedPoint.x = ((pixelCoordinate.x + _mapScrollView.contentOffset.x) * _metersPerPixel) - fabs(planetBounds.origin.x);
     normalizedProjectedPoint.y = ((_mapScrollView.contentSize.height - _mapScrollView.contentOffset.y - pixelCoordinate.y) * _metersPerPixel) - fabs(planetBounds.origin.y);
@@ -2797,17 +2797,17 @@
 
 - (CLLocationCoordinate2D)pixelToCoordinate:(CGPoint)pixelCoordinate
 {
-    return [_projection projectedPointToCoordinate:[self pixelToProjectedPoint:pixelCoordinate]];
+    return [[self projection] projectedPointToCoordinate:[self pixelToProjectedPoint:pixelCoordinate]];
 }
 
 - (RMProjectedPoint)coordinateToProjectedPoint:(CLLocationCoordinate2D)coordinate
 {
-    return [_projection coordinateToProjectedPoint:coordinate];
+    return [[self projection] coordinateToProjectedPoint:coordinate];
 }
 
 - (CLLocationCoordinate2D)projectedPointToCoordinate:(RMProjectedPoint)projectedPoint
 {
-    return [_projection projectedPointToCoordinate:projectedPoint];
+    return [[self projection] projectedPointToCoordinate:projectedPoint];
 }
 
 - (RMProjectedSize)viewSizeToProjectedSize:(CGSize)screenSize
@@ -2824,7 +2824,7 @@
 {
     CGPoint origin = CGPointMake(_mapScrollView.contentOffset.x, _mapScrollView.contentSize.height - _mapScrollView.contentOffset.y);
 
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
     RMProjectedPoint normalizedProjectedPoint;
     normalizedProjectedPoint.x = (origin.x * _metersPerPixel) - fabs(planetBounds.origin.x);
     normalizedProjectedPoint.y = (origin.y * _metersPerPixel) - fabs(planetBounds.origin.y);
@@ -2866,7 +2866,7 @@
 
 - (RMSphericalTrapezium)latitudeLongitudeBoundingBoxForTile:(RMTile)aTile
 {
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
 
     double scale = (1<<aTile.zoom);
     double tileSideLength = [_tileSourcesContainer tileSideLength];
@@ -2946,7 +2946,7 @@
 
 - (void)correctScreenPosition:(RMAnnotation *)annotation animated:(BOOL)animated
 {
-    RMProjectedRect planetBounds = _projection.planetBounds;
+    RMProjectedRect planetBounds = [self projection].planetBounds;
 	RMProjectedPoint normalizedProjectedPoint;
 	normalizedProjectedPoint.x = annotation.projectedLocation.x + fabs(planetBounds.origin.x);
 	normalizedProjectedPoint.y = annotation.projectedLocation.y + fabs(planetBounds.origin.y);
