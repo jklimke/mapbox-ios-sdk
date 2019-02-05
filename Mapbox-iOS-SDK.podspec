@@ -14,7 +14,7 @@ Pod::Spec.new do |m|
   m.source = { :git => 'https://github.com/jklimke/mapbox-ios-sdk.git', :branch => 'smartmap-mapbox' }
 
   m.platform              = :ios
-  m.ios.deployment_target = '5.0'
+  m.ios.deployment_target = '8.0'
 
   m.source_files = 'Proj4/*.h', 'MapView/Map/*.{h,c,m}'
 
@@ -36,8 +36,8 @@ Pod::Spec.new do |m|
 
   m.vendored_libraries = 'Proj4/libProj4.a'
 
-  m.dependency 'FMDB', '2.3'
-  m.dependency 'GRMustache', '7.3.0'
-  m.dependency 'SMCalloutView', '2.0'
+  m.dependency 'FMDB'
+  m.dependency 'GRMustache', '7.3.2'
+  m.dependency 'SMCalloutView', '2.1.5'
 
 end
