@@ -21,7 +21,7 @@
 
 #pragma mark -
 
-@interface RMAttributionViewController () <UIWebViewDelegate>
+@interface RMAttributionViewController ()
 
 @property (nonatomic, weak) RMMapView *mapView;
 
@@ -53,29 +53,6 @@
         [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismiss:)]];
 
     CGRect frame = (RMPostVersion7 ? self.view.bounds : CGRectMake(0, self.view.bounds.size.height - 70, self.view.bounds.size.width, 60));
-
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:frame];
-    webView.delegate = self;
-    webView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | (RMPostVersion7 ? UIViewAutoresizingFlexibleHeight : UIViewAutoresizingFlexibleTopMargin);
-    webView.scrollView.showsVerticalScrollIndicator = NO;
-    webView.backgroundColor = [UIColor clearColor];
-    webView.opaque = NO;
-
-    // don't bounce for page curled presentation
-    //
-    if (RMPreVersion7)
-    {
-        if ([webView respondsToSelector:@selector(scrollView)])
-        {
-            webView.scrollView.bounces = NO;
-        }
-        else
-        {
-            for (id subview in webView.subviews)
-                if ([[subview class] isSubclassOfClass:[UIScrollView class]])
-                    ((UIScrollView *)subview).bounces = NO;
-        }
-    }
 
     // build up attribution from tile sources
     //
@@ -157,14 +134,11 @@
     //
     [contentString appendString:attribution];
 
-    [webView loadHTMLString:contentString baseURL:nil];
-    [self.view addSubview:webView];
-
     // add activity indicator
     //
     UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     [spinner startAnimating];
-    spinner.center = webView.center;
+    spinner.center = self.view.center;
     spinner.tag = 1;
     [self.view insertSubview:spinner atIndex:0];
 }
@@ -181,11 +155,6 @@
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    UIWebView *webView = (UIWebView *)self.view.subviews[0];
-
-    if (UIInterfaceOrientationIsLandscape(fromInterfaceOrientation))
-        webView.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height);
-
     [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
 }
 
@@ -194,27 +163,6 @@
 - (void)dismiss:(id)sender
 {
     [self.mapView dismissAttribution:self];
-}
-
-#pragma mark -
-
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType
-{
-    if (navigationType == UIWebViewNavigationTypeLinkClicked)
-    {
-        [[UIApplication sharedApplication] openURL:request.URL];
-        
-        [self performSelector:@selector(dismiss:) withObject:nil afterDelay:0];
-    }
-    
-    return [[request.URL scheme] isEqualToString:@"about"];
-}
-
-- (void)webViewDidFinishLoad:(UIWebView *)webView
-{
-    [webView stringByEvaluatingJavaScriptFromString:@"document.body.style.webkitTouchCallout='none';"];
-
-    [[self.view viewWithTag:1] removeFromSuperview];
 }
 
 @end
