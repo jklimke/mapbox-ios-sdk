@@ -94,7 +94,7 @@
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)context
 {
     CGRect rect   = CGContextGetClipBoundingBox(context);
-    CGRect bounds = self.bounds;
+    CGRect bounds = layer.bounds;
     short zoom    = log2(bounds.size.width / rect.size.width);
 
 //    NSLog(@"drawLayer: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
