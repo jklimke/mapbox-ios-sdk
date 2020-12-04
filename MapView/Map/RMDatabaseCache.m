@@ -249,8 +249,10 @@
 
 - (void)addImage:(UIImage *)image forTile:(RMTile)tile withCacheKey:(NSString *)aCacheKey
 {
+
     // TODO: Converting the image here (again) is not so good...
 	NSData *data = UIImageJPEGRepresentation(image,0.8);
+
     [self addDiskCachedImageData:UIImagePNGRepresentation(image) forTile:tile withCacheKey:aCacheKey];
 }
 

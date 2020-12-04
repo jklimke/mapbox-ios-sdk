@@ -162,9 +162,11 @@
                                                                                                         options:NSAnchoredSearch & NSBackwardsSearch
                                                                                                           range:NSMakeRange(0, [[referenceURL absoluteString] length])]];
     }
+
     
     if ([[referenceURL pathExtension] isEqualToString:@"json"] && (dataObject = [NSString brandedStringWithContentsOfURL:referenceURL encoding:NSUTF8StringEncoding error:nil]) && dataObject)
     {
+
         return [self initWithTileJSON:dataObject enablingDataOnMapView:mapView];
     }
 
@@ -360,7 +362,7 @@
 
 + (BOOL)isUsingLargeTiles
 {
-    return ([[RMConfiguration sharedInstance] accessToken] && [[UIScreen mainScreen] scale] > 1.0);
+    return ([[UIScreen mainScreen] scale] > 1.0);
 }
 
 - (NSString *)uniqueTilecacheKey

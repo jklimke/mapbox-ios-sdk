@@ -94,7 +94,7 @@
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)context
 {
     CGRect rect   = CGContextGetClipBoundingBox(context);
-    CGRect bounds = self.bounds;
+    CGRect bounds = layer.bounds;
     short zoom    = log2(bounds.size.width / rect.size.width);
     BOOL layerContainedTile = YES;
 //    NSLog(@"drawLayer: {{%f,%f},{%f,%f}}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
@@ -310,7 +310,11 @@
                 UIGraphicsEndImageContext();
             }
 
-            [tileImage drawInRect:rect];
+            CGContextSaveGState(context);
+            CGContextTranslateCTM(context, 0, rect.origin.y + rect.size.height);
+            CGContextScaleCTM(context, 1.0, -1.0);
+            CGContextDrawImage(context, CGRectMake(rect.origin.x, 0, rect.size.width, rect.size.height), tileImage.CGImage);
+            CGContextRestoreGState(context);
         }
         else
         {
